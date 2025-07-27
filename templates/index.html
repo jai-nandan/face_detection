@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Face Detection</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: url("https://d2mk45aasx86xg.cloudfront.net/Using_Deep_Learning_to_Design_Real_time_Face_Detection_and_Recognition_Systems_938a8cdcd7.webp") no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #fff;
+        }
+
+        .overlay {
+            background-color: rgba(11, 15, 26, 0.85);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            box-sizing: border-box;
+        }
+
+        .center-content {
+            width: 90%;
+            max-width: 700px;
+            background: rgba(17, 34, 64, 0.9);
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.2);
+        }
+
+        h1 {
+            font-size: 40px;
+            color: #6fa8dc;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            margin: 15px 10px;
+            padding: 14px 28px;
+            font-size: 18px;
+            background-color: #112240;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #1f3b60;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            font-size: 16px;
+            width: 80%;
+            max-width: 300px;
+            border-radius: 8px;
+            border: none;
+            margin-top: 15px;
+        }
+
+        input[type="file"] {
+            margin-top: 15px;
+            font-size: 16px;
+        }
+
+        label {
+            display: block;
+            margin-top: 20px;
+            font-size: 18px;
+            color: #add8e6;
+        }
+
+        #video, #uploadedImage {
+            margin-top: 20px;
+            border: 3px solid #6fa8dc;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        #humanStatus, #imageStatus {
+            margin-top: 15px;
+            font-size: 18px;
+            color: #fff;
+        }
+
+        .status-green {
+            color: #00ff00;
+        }
+
+        .status-red {
+            color: #ff4d4d;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 32px;
+            }
+
+            .btn {
+                font-size: 16px;
+                padding: 12px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="overlay">
+    <div class="center-content">
+        <h1>AI Face Detection</h1>
+
+        <label>Choose Mode:</label>
+        <button class="btn" onclick="selectMode('live')">1. Face Detection</button>
+        <button class="btn" onclick="selectMode('image')">2. Import Image to Detect</button>
+
+        <div id="liveSection" style="display:none;">
+            <label for="nameInput">Enter Name to Register:</label>
+            <input type="text" id="nameInput" placeholder="Enter name..." />
+            <div>
+                <button class="btn" onclick="startCam()">Start</button>
+                <button class="btn" onclick="stopCam()">End</button>
+            </div>
+            <img id="video" />
+            <div id="humanStatus">Human Detection Status: Unknown</div>
+        </div>
+
+        <div id="imageSection" style="display:none;">
+            <label for="imageInput">Upload an Image:</label>
+            <input type="file" id="imageInput" accept="image/*" onchange="previewImage()" />
+            <img id="uploadedImage" />
+            <div id="imageStatus">Image Detection Status: Unknown</div>
+            <button class="btn" onclick="removeImage()">Remove Image</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function selectMode(mode) {
+        document.getElementById("liveSection").style.display = mode === 'live' ? 'block' : 'none';
+        document.getElementById("imageSection").style.display = mode === 'image' ? 'block' : 'none';
+    }
+
+    function startCam() {
+        const name = document.getElementById("nameInput").value.trim();
+        if (!name) {
+            alert("Please enter a name to register.");
+            return;
+        }
+        document.getElementById("video").src = `/start?name=${encodeURIComponent(name)}`;
+        setInterval(checkStatus, 2000);
+    }
+
+    function stopCam() {
+        document.getElementById("video").src = "";
+        fetch("/stop");
+        const status = document.getElementById("humanStatus");
+        status.innerText = "Human Detection Status: Unknown";
+        status.classList.remove("status-green", "status-red");
+    }
+
+    function checkStatus() {
+        fetch('/status')
+            .then(res => res.json())
+            .then(data => {
+                const status = document.getElementById("humanStatus");
+                if (data.human) {
+                    status.innerText = "Human Detection Status: It is a Human";
+                    status.classList.remove("status-red");
+                    status.classList.add("status-green");
+                } else {
+                    status.innerText = "Human Detection Status: Not a Human";
+                    status.classList.remove("status-green");
+                    status.classList.add("status-red");
+                }
+            });
+    }
+
+    function previewImage() {
+        const file = document.getElementById("imageInput").files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById("uploadedImage").src = e.target.result;
+            const formData = new FormData();
+            formData.append("image", file);
+
+            fetch("/detect-image", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const status = document.getElementById("imageStatus");
+                if (data.human) {
+                    status.innerText = "Image Detection Status: It is a Human";
+                    status.classList.remove("status-red");
+                    status.classList.add("status-green");
+                } else {
+                    status.innerText = "Image Detection Status: Not a Human";
+                    status.classList.remove("status-green");
+                    status.classList.add("status-red");
+                }
+            })
+            .catch(err => {
+                const status = document.getElementById("imageStatus");
+                status.innerText = "Error detecting image.";
+                status.classList.remove("status-green");
+                status.classList.add("status-red");
+            });
+        }
+        if (file) reader.readAsDataURL(file);
+    }
+
+    function removeImage() {
+        document.getElementById("imageInput").value = "";
+        document.getElementById("uploadedImage").src = "";
+        const status = document.getElementById("imageStatus");
+        status.innerText = "Image Detection Status: Unknown";
+        status.classList.remove("status-green", "status-red");
+    }
+</script>
+</body>
+</html>

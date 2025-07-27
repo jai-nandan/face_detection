@@ -1,4 +1,4 @@
-## Face Detection Project Using Python | Real-time AI in Action!
+ Face Detection Project Using Python | Real-time AI in Action!
 👋 Hello LinkedIn family!
 
 I’m thrilled to share one of my recent hands-on projects — Face Detection System using Python and OpenCV. This was an exciting journey that helped me explore the power of Computer Vision and real-time AI applications!

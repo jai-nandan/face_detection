@@ -53,3 +53,16 @@ Importance of lighting and preprocessing in detection
 🖼️ Add image capture & storage for detected faces
 🧠 Switch to Deep Learning models like MTCNN or SSD for better results
 
+
+output
+
+<img width="1912" height="913" alt="Screenshot 2025-07-13 123829" src="https://github.com/user-attachments/assets/e1e155bb-c82d-4692-85cd-7e940d4857c7" />
+<img width="1889" height="920" alt="Screenshot 2025-07-13 123849" src="https://github.com/user-attachments/assets/b355838a-071f-4dca-81f4-ffbe13bc7640" />
+<img width="1874" height="919" alt="Screenshot 2025-07-13 123913" src="https://github.com/user-attachments/assets/e87a6686-3afd-43ef-974c-ca110546009e" />
+<img width="1901" height="924" alt="Screenshot 2025-07-13 123928" src="https://github.com/user-atta<img width="923" height="920" alt="Screenshot 2025-07-13 124005" src="https://github.com/user-attachments/assets/a04d2d45-27f9-4ad7-9d8a-1b8228d2dd23" />
+<img width="938" height="601" alt="Screenshot 2025-07-13 124412" src="https://github.com/user-attachments/assets/788276a4-0be9-4bc5-9b56-1e66b038f1f3" />
+<img width="938" height="601" alt="Screenshot 2025-07-13 124412" src="https://github.com/user-attachments/assets/e5623cd4-52cc-454a-85b2-308424a80762" />
+<img width="1911" height="910" alt="Screenshot 2025-07-27 234823" src="https://github.com/user-attachments/assets/a4bcca06-c226-4a0b-ba26-302d7dd53047" />
+
+
+
